@@ -1,0 +1,4 @@
+[submodule "lib_supir"]
+	path = lib_supir
+	url = https://github.com/Haoming02/SUPIR-Backend
+	shallow = true
