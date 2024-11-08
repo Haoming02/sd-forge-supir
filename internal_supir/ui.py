@@ -7,17 +7,6 @@ NEG_PROMPT = "painting, illustration, drawing, art, sketch, anime, cartoon, CG S
 def supir_ui() -> dict[str, gr.components.Component]:
     args = {}
 
-    args["upscale"] = gr.Radio(
-        label="Upscale Factor",
-        choices=(
-            ("x1", 1),
-            ("x2", 2),
-            ("x4", 4),
-            ("x8", 8),
-        ),
-        value=2,
-    )
-
     with gr.Row():
         args["prompt"] = gr.Textbox(
             label="Image Description / Caption",

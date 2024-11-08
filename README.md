@@ -14,6 +14,8 @@ This is an Extension for the [Classic Forge Webui](https://github.com/Haoming02/
 ## Roadmap
 - [ ] README
 - [ ] Parameters Documentations
+- [ ] Cache Model
+- [ ] Infotext
 - [ ] Support New Forge
 - [ ] Support A1111
 - [ ] Optimization
