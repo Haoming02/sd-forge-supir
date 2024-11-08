@@ -4,9 +4,9 @@ from modules import scripts_postprocessing, sd_models
 from modules.ui_components import InputAccordion
 from modules.paths import models_path
 
-from util_supir.model_loader import load_model
-from util_supir.main_stage import process
-from util_supir.supir_ui import supir_ui
+from internal_supir.model_loader import load_model
+from internal_supir.main_stage import process
+from internal_supir.supir_ui import supir_ui
 from lib_supir import library_path
 
 from PIL import Image
