@@ -4,8 +4,8 @@ from modules import scripts_postprocessing, sd_models
 from modules.ui_components import InputAccordion
 from modules.paths import models_path
 
-from internal_supir.model_loader import load_model
 from internal_supir.pipeline import denoise
+from internal_supir.models import load_model
 from internal_supir.ui import supir_ui
 from lib_supir import library_path
 
@@ -52,22 +52,6 @@ class ForgeSUPIR(scripts_postprocessing.ScriptPostprocessing):
         input_image = np.asarray(image, dtype=np.uint8)
 
         result: np.ndarray = denoise(model=model, input_image=input_image, **args)
-        #     prompt=args["prompt"],
-        #     p_prompt=args["p_prompt"],
-        #     n_prompt=args["n_prompt"],
-        #     edm_steps=args["edm_steps"],
-        #     s_stage1=args["s_stage1"],
-        #     s_stage2=args["s_stage2"],
-        #     s_cfg=args["s_cfg"],
-        #     seed=args["seed"],
-        #     s_churn=args["s_churn"],
-        #     s_noise=args["s_noise"],
-        #     color_fix_type=args["color_fix_type"],
-        #     linear_CFG=args["linear_CFG"],
-        #     linear_s_stage2=args["linear_s_stage2"],
-        #     spt_linear_CFG=args["spt_linear_CFG"],
-        #     spt_linear_s_stage2=args["spt_linear_s_stage2"],
-        # )
 
         pp.image = Image.fromarray(result)
         pp.info["SUPIR"] = True

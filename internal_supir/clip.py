@@ -8,7 +8,7 @@ Modified by. Haoming02 to work with Forge
 import open_clip
 
 
-def build_text_model_from_openai_state_dict(state_dict, cast_dtype):
+def build_text_model(state_dict, cast_dtype):
     open_clip.model._build_vision_tower = lambda *args, **kwargs: None
 
     embed_dim = state_dict["text_projection"].shape[1]
