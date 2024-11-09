@@ -1,5 +1,3 @@
-from ldm_patched.modules.model_management import unload_all_models
-
 from modules import scripts_postprocessing, sd_models
 from modules.ui_components import InputAccordion
 from modules.paths import models_path
@@ -9,9 +7,13 @@ from internal_supir.models import load_model
 from internal_supir.ui import supir_ui
 from lib_supir import library_path
 
+from typing import Optional
+from torch.nn import Module
+from rich import print
 from PIL import Image
 import numpy as np
 import sys
+import gc
 import os
 
 
@@ -21,6 +23,10 @@ SUPIR_CKPT = os.path.join(models_path, "SUPIR", "SUPIR-v0Q_fp16.safetensors")
 class ForgeSUPIR(scripts_postprocessing.ScriptPostprocessing):
     name = "SUPIR"
     order = 1024
+
+    def __init__(self):
+        self.cached_model: Optional[Module] = None
+        self.cached_configs: Optional[dict] = None
 
     def ui(self):
         if not library_path in sys.path:
@@ -44,15 +50,33 @@ class ForgeSUPIR(scripts_postprocessing.ScriptPostprocessing):
         if sd_models.model_data.sd_model.is_sdxl is not True:
             return
 
-        unload_all_models()
         sdxl_ckpt: str = sd_models.model_data.sd_model.filename
-        model = load_model(sdxl_ckpt, SUPIR_CKPT)
+
+        if self.cached_model is None:
+            print("\n[bright_cyan]Creating new SUPIR Model...")
+            self.cached_model = load_model(sdxl_ckpt, SUPIR_CKPT)
+            self.cached_configs = {"ckpt": sdxl_ckpt}
+        elif self.cached_configs["ckpt"] != sdxl_ckpt:
+            print("\n[bright_cyan]Recreating new SUPIR Model...")
+            del self.cached_model
+            gc.collect()
+
+            self.cached_model = load_model(sdxl_ckpt, SUPIR_CKPT)
+            self.cached_configs = {"ckpt": sdxl_ckpt}
+        else:
+            print("\n[bright_cyan]Using cached SUPIR Model...")
+            gc.collect()
 
         image: Image.Image = pp.image
         input_image = np.asarray(image, dtype=np.uint8)
 
-        result: np.ndarray = denoise(model=model, input_image=input_image, **args)
+        print("\n[bright_cyan]Processing...")
+        result: np.ndarray = denoise(
+            model=self.cached_model,
+            input_image=input_image,
+            **args,
+        )
 
+        print("\n[bright_green]Done!")
         pp.image = Image.fromarray(result)
         pp.info["SUPIR"] = True
-        unload_all_models()

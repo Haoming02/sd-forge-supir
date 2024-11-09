@@ -1,4 +1,5 @@
 from transformers import CLIPTextConfig, CLIPTokenizer, CLIPTextModel
+from rich import print
 import torch
 import gc
 import os
@@ -20,6 +21,7 @@ CONFIG = os.path.join(library_path, "configs", "clip_vit_config.json")
 
 
 def load_model(sdxl_ckpt: str, supir_ckpt: str):
+    print("\n[bright_black]loading...")
     model, sdxl_state_dict = create_SUPIR_model(SUPIR_YAML, sdxl_ckpt, supir_ckpt)
     soft_empty_cache()
 
@@ -29,6 +31,7 @@ def load_model(sdxl_ckpt: str, supir_ckpt: str):
         filter_keys=False,
     )
 
+    print("\n[bright_black]creating 1st clip...")
     clip_text_config = CLIPTextConfig.from_pretrained(CONFIG)
 
     model.conditioner.embedders[0].tokenizer = CLIPTokenizer.from_pretrained(TOKENIZER)
@@ -42,6 +45,7 @@ def load_model(sdxl_ckpt: str, supir_ckpt: str):
     del sdxl_state_dict
     soft_empty_cache()
 
+    print("\n[bright_black]creating 2nd clip...")
     state_dict = state_dict_prefix_replace(
         state_dict, {"conditioner.embedders.1.model.": ""}, filter_keys=True
     )
@@ -52,9 +56,9 @@ def load_model(sdxl_ckpt: str, supir_ckpt: str):
     del state_dict, clip_g
     soft_empty_cache()
 
-    model.to(dtype=torch.bfloat16)
+    print("\n[bright_black]initializing...")
+    model.to(dtype=torch.float16)
     model.first_stage_model.to(dtype=torch.bfloat16)
-    model.conditioner.to(dtype=torch.bfloat16)
     model.model.to(dtype=torch.float8_e4m3fn)
 
     model.init_tile_vae(

@@ -12,10 +12,10 @@ This is an Extension for the [Classic Forge Webui](https://github.com/Haoming02/
 > - **RAM:** 32+ GB
 
 ## Roadmap
-- [ ] README
-- [ ] Parameters Documentations
-- [ ] Cache Model
-- [ ] Infotext
+- [X] Cache Model
 - [ ] Support New Forge
 - [ ] Support A1111
+- [ ] README
+- [ ] Documentations
+- [ ] Infotext
 - [ ] Optimization
